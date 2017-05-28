@@ -7,5 +7,5 @@
 for file in savegame_00*.dat
 do
     echo $file
-    ./save.py -c $file -vv
+    ./swh_savegame.py -c $file -vv
 done
