@@ -118,14 +118,14 @@ despite the `impak` extension - if you unzip it, look at the resulting files
 Notes on the Savegame Format
 ----------------------------
 
-I don't have much to say here, really...  I'm quite sure that the bits of the file
-supported directly by arguments here are being processed properly, but I've not
-really played around with any of the other data in the file, so I'm really not sure
-exactly how any of the rest works.  I think it would be trivial to allow the
-utility to add new hats, for instance, but I'm not sure if hats and items share
-a common ID pool, or if hats are separate.  I also suspect it wouldn't be difficult
-to unlock characters before they're meant to be unlocked (when not in NG+, of
-course), but I didn't bother trying.
+I'm quite sure that the bits of the file supported directly by arguments here
+are being processed properly, but I've not really played around with any of the
+other data in the file, so I'm really not sure exactly how any of the rest
+works.  I think it would be trivial to allow the utility to add new hats, for
+instance, but I'm not sure if hats and items share a common ID pool, or if hats
+are separate.  I also suspect it wouldn't be difficult to unlock characters
+before they're meant to be unlocked (when not in NG+, of course), but I didn't
+bother trying.
 
 If you take a look at a savegame in a hex editor and look near the end, you'll
 see what looks like lists of abilities which have been unlocked for characters,
@@ -156,6 +156,12 @@ I'm asserting that various numbers are 0x00 are actually supposed to be lists of
 which just happen to have zero elements on all my savegames.  On the couple of updates
 that I've had to do since figuring out what I cared about, that's been what's introduced
 problems.
+
+And, of course, all of the data marked with "unknown" as varnames are basically just
+guesses as to what size data they are.  When presented with five unknown bytes, do you
+read it as a uint32 followed by a byte, or the other way around?  Or two uint16s and
+a byte?  Lots of options, certainly, and I'm sure that I've gotten it wrong in a number
+of places.
 
 If you do run across a savegame which this can't open, do feel free to open up an
 Issue here, and attach the savegame, and I'll see if I can patch it up.
