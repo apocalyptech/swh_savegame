@@ -93,6 +93,13 @@ the characters to acquire during a mission.  When the character levels up from
 you'll get all those abilities after running a single mission with the
 character.
 
+(Interestingly, it looks like you only need **one** character to officially go
+through the level-up process for **all** characters to receive any ability
+unlocks they might have missed.  So I could theoretically rewrite `--experience`
+a bit so that it sets all but one unlocked characters to 20000, and then
+just left one at 19999, to serve as the "unlock" character.  In the end I think
+that'd be more confusing than what we do now, though, so I'm going to leave it.)
+
 The `--inventory` option adds a ridiculous number of items to your inventory.
 By default these will include items from the *SteamWorld Heist: The Outsider*
 DLC.  You can specify `--nodlc` to omit these items, if you don't actually have
