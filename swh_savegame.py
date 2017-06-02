@@ -493,23 +493,29 @@ class Savegame(object):
         assert self.initial_03 == 3
 
         # Unknown byte of some sort; 0x14 and 0xf4 on completed games, 0x00 on not
+        # Another seen value is 0xF6
         self.unknown_01 = read_uint8(df)
 
-        # Six unknown bytes
+        # Six unknown bytes - I suspect this is an int (possibly either time-played
+        # or turns-taken) followed by a short (or two bytes)
         self.unknown_02 = df.read(6)
 
-        # 0x40
+        # 0x40: also seen: 0x41!  That 0x41 is only seen in a single of my savegames
+        # so far.  Keeping the varname at 'initial_40' for now, though that's silly.
         self.initial_40 = read_uint8(df)
-        assert self.initial_40 == 0x40
+        #assert self.initial_40 == 0x40
 
         # Unknown byte of some sort; 0x14 and 0xf4 on completed games, 0x00 on not
+        # Also seen: 0xE0
         self.unknown_03 = read_uint8(df)
 
-        # Another six unknown bytes
+        # Another six unknown bytes.  Probably related to either time-played or
+        # turns-taken, at least partially
         self.unknown_04 = df.read(6)
 
-        # Another unknown byte; 0x40 on nearly all my saves, but 0x00 on my
-        # NG+ save.  Going to keep the var name but not do an assert on it, I guess.
+        # Another unknown byte; 0x40 on nearly all my saves, but 0x00 on a
+        # very earliest NG+ save.  Going to keep the var name but not do an
+        # assert on it, I guess.
         self.initial_40_2 = read_uint8(df)
         #assert self.initial_40_2 == 0x40
 

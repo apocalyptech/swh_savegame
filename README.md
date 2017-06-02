@@ -19,17 +19,15 @@ untested in Python 2.  It's command-line only; there's no GUI, nor do I
 plan to write one for it.  I use it on Linux, but it should work in OSX's
 Terminal without problems, or in a Windows commandline/powershell.
 
-**Disclaimer:** This has been tested on a relatively small pool of
-savegames that I'd collected once I realized I wanted to write this,
-and I am positive that there are plenty of savegame possibilities that
-this utility won't be able to read.  The utility uses Python's `assert`
-statement pretty frequently while loading, and does a sanity check to
-make sure that it can correctly write out a 100%-accurate replica of
-the savegame before actually making any changes, so the worst-case
-scenario is that the utility Just Doesn't Do Anything, but as always,
-keep in mind that this utility could generate a savegame that will
-break *SteamWorld Heist* in unexpected ways.  Buyer beware!  Make backups
-of your savegames!
+**Disclaimer:** This has been tested on a bunch of savegames and works just
+fine on the ones I have, but I am sure that there are plenty of savegame
+possibilities that this utility won't be able to read.  The utility uses
+Python's `assert` statement pretty frequently while loading, and does a sanity
+check to make sure that it can correctly write out a 100%-accurate replica of
+the savegame before actually making any changes, so the worst-case scenario is
+that the utility Just Doesn't Do Anything, but as always, keep in mind that
+this utility could generate a savegame that will break *SteamWorld Heist* in
+unexpected ways.  Buyer beware!  Make backups of your savegames!
 
 This utility does *not* parse the entire savegame; it only goes up to
 about the place in the file that I was interested in editing, so there's
@@ -143,20 +141,18 @@ do the unlocks.  There's a lot of data between where I stopped and where that bi
 of the file is, though, and I didn't care enough to slog through it.
 
 *SteamWorld Heist* saves the game midlevel if you quit while on a mission, and
-it looks like all that level data is after the point where I stopped processing,
-since it seemed to load just fine with `--check`.  I bet if that bit of the savegame
-is parsed out, you could play a lot of games with item/enemy placement, etc, on
-active levels.  Not really worth figuring out, though, IMO.
+I bet you could do things like edit health, ability usage, enemy health, etc,
+if one were inclined to parse the format.  Not really worth figuring out, though,
+IMO.  The handful of mid-level savegames I've tried with the utility seem to
+work fine; I think the data for all that is after the point at which I stopped
+parsing it.
 
 As I mentioned far above, I've verified that this works against the collection
-of savegames that I saved, though I am quite sure that there are savegames out there
-which this utility'll choke on currently.  My main two groups were a handful of
-savegames right near the end of the game (one just before the final level, basically,
-and a couple more after I bought the DLC and went through the DLC levels), and then
-a bunch more right near the very beginning of the game (including one NG+ savegame).
-I'm going to be playing through the game again pretty soon most likely, though, and
-I'll be checking those savegames against the utility as I go, to see what other edge
-cases I've missed.
+of savegames that I saved, though I am sure that there are savegames out there
+which this utility'll choke on.  I've checked it against about 2/3rds of the game
+in NG+ mode, and against a few of the final savegames from my initial runthrough
+the game, and those all load just fine (though I've made a couple of minor fixes
+on this NG+ runthrough).  I'll be checking more savegames as I finish up NG+.
 
 In particular, I suspect that many of the places in the savegame loading routine where
 I'm asserting that various numbers are 0x00 are actually supposed to be lists of data
