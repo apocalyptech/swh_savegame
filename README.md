@@ -42,7 +42,7 @@ Usage
 -----
 
 ```
-usage: swh_savegame.py [-h] [-l | -c | -o OUTPUT] [-e] [-w WATER] [-s SIZE]
+usage: swh_savegame.py [-h] (-l | -c | -o OUTPUT) [-e] [-w WATER] [-s SIZE]
                        [-i] [-a item[,item,...]] [-t] [-v]
                        FILENAME
 

@@ -1050,7 +1050,7 @@ if __name__ == '__main__':
         nargs=1,
         help='Input filename')
 
-    group = parser.add_mutually_exclusive_group()
+    group = parser.add_mutually_exclusive_group(required=True)
 
     group.add_argument('-l', '--list',
         action='store_true',
