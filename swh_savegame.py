@@ -465,11 +465,64 @@ class Savegame(object):
     Class to hold a SteamWorld Heist savegame.
     """
 
+    # Hats!
+    hats_base = [
+            'youtube_hat', 'facebook_hat', 'twitter_hat', 'double_hat',
+            'blue_fine_hat', 'shades', 'brownknitted', 'spinny',
+            'goggle_hat', 'horns', 'lovely_hat', 'cavalier_cap',
+            'cat_ears', 'javert_hat', 'rusty_hat', 'shiner_hat',
+            'syd_vast', 'mutant_mudds', 'star_cowboy', 'goat_sim',
+            'band_helmet', 'fedora', 'hankton_cap', 'intelligence_hat',
+            'red_beret', 'heavy_chopper_hat', 'bowtie', 'goku_hair',
+            'green_bro_cap', 'valkyrie', 'royal_wig', 'red_bro_cap',
+            'royal_crown', 'bomb_deployer_hat', 'golem_cap', 'buzzer_hat',
+            'ace_hat', 'mustache_hat', 'chopped_head', 'beetle_hat',
+            'heavy_beetle_hat', 'beak_hat', 'catch_of_the_day', 'air_force_cap',
+            'classic_ushanka', 'soft_cap', 'war_crown', 'blue_red_hat',
+            'fez', 'funky_cap', 'blue_yellow_hat', 'crown',
+            'green_ushanka', 'justice_circlet', 'snowboard_hat', 'cathat',
+            'welder_cap', 'corshat', 'royalist_helmet', 'royalist_officer_hat',
+            'royalist_blast_helmet', 'royalist_rider_helmet', 'pink_bandana', 'iron_cap',
+            'armoured_tophat', 'medic_hat', 'army_helmet', 'bandit',
+            'beret', 'boss_cap', 'bowler', 'brown_bowler',
+            'cap', 'truckercap', 'captain', 'cowbot',
+            'eggs_in_nest', 'fisherman', 'gunnar_hat', 'poof_hat',
+            'goon_hat', 'pirate', 'pirate2', 'swab',
+            'top', 'warm', 'tophatpurple', 'sailor_hat',
+            'dragoon', 'fire_helmet', 'copperback_cap', 'caw-kaa',
+        ]
+
+    # More hats
+    hats_dlc = {
+            1: [
+                'sauce_hat', 'prison_hat', 'pokercowboy', 'jones',
+                'ash', 'jayne', 'layton', 'flower_crown',
+                'shell_crown', 'petit_top_hat', 'cloud', 'turban',
+                'wizzard', 'strawhat', 'dolores', 'hatoful',
+                'flapper_band', 'marty_cap', 'jester', 'durkslag',
+                'headphones', 'detectivecap',
+                ],
+            2: [
+                'posthelm', 'sortinghat', 'bladerunner', 'first_crown',
+                'five_hats', 'metropolis', 'miner_helm', 'spock',
+                'squidberg', 'sw_helm'
+                ],
+        }
+
     def __init__(self):
         """
         Initialization.
         """
         pass
+
+    def has_dlc(self, dlcnum):
+        """
+        Method to find out if this savegame has the given DLC enabled
+        """
+        if 'DLC/dlc{:02d}'.format(dlcnum).encode('utf-8') in self.dlc:
+            return True
+        else:
+            return False
 
     def load(self, filename):
         """
@@ -976,6 +1029,15 @@ class Savegame(object):
         if itemname not in self.seen_items:
             self.seen_items.append(itemname)
 
+    def add_hat(self, hatname):
+        """
+        Adds a new hat to our hat list.
+        """
+        self.last_item_id += 1
+        self.hats[self.last_item_id] = Item(name=hatname, idnum=self.last_item_id)
+        if hatname not in self.seen_hats:
+            self.seen_hats.append(hatname)
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(
@@ -1020,10 +1082,6 @@ if __name__ == '__main__':
             inventory (will add appropriate inventory space automatically
             unless --size is specified, in which case --size is used)""")
 
-    parser.add_argument('-n', '--nodlc',
-        action='store_true',
-        help='Don\'t add DLC items when using the --inventory option')
-
     parser.add_argument('-a', '--additem',
         type=str,
         action='append',
@@ -1033,6 +1091,11 @@ if __name__ == '__main__':
             separated by commas.  (Will increase inventory size automatically
             if required.)""")
 
+    parser.add_argument('-t', '--hats',
+        action='store_true',
+        dest='hats',
+        help='Add all hats to the savegame.')
+
     parser.add_argument('-v', '--verbose',
         action='count',
         help="""Show extra information during list.  Specify more than once
@@ -1041,12 +1104,12 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if (args.list or args.check) and (args.experience or args.water or
-            args.size or args.inventory or args.nodlc or args.additem):
+            args.size or args.inventory or args.additem or args.hats):
         parser.error('--list and --check cannot be used with any of the editing flags')
 
     if args.output and not args.experience and not args.water and \
-            not args.size and not args.inventory and not args.nodlc and \
-            not args.additem:
+            not args.size and not args.inventory and not args.additem and \
+            not args.hats:
         parser.error('Specify a modification to make if not using --list')
 
     # Load the savegame
@@ -1200,7 +1263,7 @@ if __name__ == '__main__':
                 ]
 
             # Assault
-            if args.nodlc:
+            if self.has_dlc(1):
                 itemlist += [
                         b'smg_09', b'smg_09', b'smg_09', b'shotgun_09',
                         b'smg_rare_09', b'smg_rare_09', b'smg_rare_09', b'shotgun_09',
@@ -1218,7 +1281,7 @@ if __name__ == '__main__':
                 ]
 
             # Heavy
-            if args.nodlc:
+            if self.has_dlc(1):
                 itemlist += [
                         b'rpg_09', b'rpg_09', b'rpg_rare_09', b'rpg_rare_09',
                         b'lobber_09', b'lobber_09', b'minigun_rare_09', b'minigun_rare_09',
@@ -1249,7 +1312,7 @@ if __name__ == '__main__':
                 ]
 
             # Damage (continued)
-            if not args.nodlc:
+            if self.has_dlc(1):
                 itemlist += [
                         b'ammo_berserker', b'ammo_berserker', b'ammo_berserker', b'ammo_berserker',
                     ]
@@ -1276,7 +1339,7 @@ if __name__ == '__main__':
                 ]
 
             # Armor (continued)
-            if not args.nodlc:
+            if self.has_dlc(1):
                 itemlist += [
                         b'armor_retaliating', b'armor_retaliating', b'armor_retaliating', b'armor_retaliating',
                     ]
@@ -1287,7 +1350,7 @@ if __name__ == '__main__':
                 ]
 
             # Taunt Horn (can't imagine you'd want all four of these, but whatever)
-            if not args.nodlc:
+            if self.has_dlc(1):
                 itemlist += [
                         b'taunt_horn', b'taunt_horn', b'taunt_horn', b'taunt_horn',
                     ]
@@ -1317,6 +1380,20 @@ if __name__ == '__main__':
             print('Increasing inventory size to {} to accomodate items (previously {})'.format(
                 len(sg.items), sg.inventory_size))
             sg.inventory_size = len(sg.items)
+
+        # Add hats
+        if args.hats:
+            hatlist = sg.hats_base
+            for dlcnum in [1, 2]:
+                if sg.has_dlc(dlcnum):
+                    hatlist += sg.hats_dlc[dlcnum]
+            hats_added = 0
+            for hatname in hatlist:
+                encoded = hatname.encode('utf-8')
+                if encoded not in sg.seen_hats:
+                    sg.add_hat(encoded)
+                    hats_added += 1
+            print('Added {} hats ({} already present)'.format(hats_added, len(hatlist)-hats_added))
 
         sg.save(args.output)
         print('')
