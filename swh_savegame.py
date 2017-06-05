@@ -547,14 +547,16 @@ class Savegame(object):
 
         ###
         ### Interestingly; there's two very similar blocks here:
-        ###   1) Something which looks like it's probably a uint8
-        ###   2) Six bytes for which I can't seem to find a clear pattern
+        ###   1) Something which often looks like it's probably a uint8
+        ###   2) Five bytes for which I can't seem to find a clear pattern
         ###      (int/short/byte/whatever)
-        ###   3) A final byte which looks a lot like it should be a
-        ###      uint8.
+        ###   3) A final two byte which look a lot like a uint16, which
+        ###      seems to get bigger as the game is played.  It starts
+        ###      'round 0x407F (16511) or 0x40F9 (16633) and on my saves
+        ###      gets as high as 0x4101 (16641).
         ###
-        ### So yeah, that's the sequence unknown_01 -> unknown_02 -> initial_40
-        ### and unknown_03 -> unknown_04 -> initial_40_2
+        ### So yeah, that's the sequence unknown_01 -> unknown_02 -> unknown_inc_01
+        ### and unknown_03 -> unknown_04 -> unknown_inc_02
         ###
         ### I surmise below that at least one of these might be related to
         ### the total time played (as displayed on the load screen), though
@@ -562,28 +564,27 @@ class Savegame(object):
         ### to each other.  Ah, well.
         ###
 
-        # Unknown byte of some sort; 0x14 and 0xf4 on completed games, 0x00 on not
-        # Another seen value is 0xF6
+        # Unknown byte of some sort.  Sometimes this seems very regular, other times
+        # it seems a bit more random.
         self.unknown_01 = read_uint8(df)
 
-        # Six unknown bytes - I suspect this is an int (possibly time-played?)
-        # followed by a short (or two bytes)
-        self.unknown_02 = df.read(6)
+        # Five unknown bytes
+        self.unknown_02 = df.read(5)
 
-        # Nearly always 0x40, but sometimes 0x41.  Variable name is a bit obsolete
-        # now, but whatever.
-        self.initial_40 = read_uint8(df)
+        # A strange incrementing variable (though it doesn't always increment), which
+        # starts at a suspiciously high value.  The second byte is nearly always 0x40
+        # which threw me off for awhile, but it does seem to be a uint16 upon further
+        # introspection.
+        self.unknown_inc_01 = read_uint16(df)
 
         # Unknown byte of some sort
         self.unknown_03 = read_uint8(df)
 
-        # Another six unknown bytes.  Possibly related to time-played?
-        self.unknown_04 = df.read(6)
+        # Another five unknown bytes.
+        self.unknown_04 = df.read(5)
 
-        # Another unknown byte; 0x40 on nearly all my saves, but 0x00 on a
-        # very earliest NG+ save.  Going to keep the var name but not do an
-        # assert on it, I guess, as with initial_40, above.
-        self.initial_40_2 = read_uint8(df)
+        # Another strange incrementor
+        self.unknown_inc_02 = read_uint16(df)
 
         # Difficuly setting
         self.difficulty = read_string(df)
@@ -849,20 +850,20 @@ class Savegame(object):
         # Unknown byte
         write_uint8(df, self.unknown_01)
 
-        # Six unknown bytes
+        # Five unknown bytes
         df.write(self.unknown_02)
 
-        # 0x40
-        write_uint8(df, self.initial_40)
+        # Weird incrementor
+        write_uint16(df, self.unknown_inc_01)
 
         # Unknown byte
         write_uint8(df, self.unknown_03)
 
-        # Another six unknown bytes
+        # Another five unknown bytes
         df.write(self.unknown_04)
 
-        # Another 0x40
-        write_uint8(df, self.initial_40_2)
+        # Another weird incrementor
+        write_uint16(df, self.unknown_inc_02)
 
         # Difficulty setting
         write_string(df, self.difficulty)
