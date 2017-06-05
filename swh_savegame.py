@@ -1145,6 +1145,13 @@ if __name__ == '__main__':
     # Do what's required
     if args.list:
 
+        # Overall info
+        print('Game Difficulty: {}'.format(sg.difficulty.decode('utf-8')))
+        print('Turns taken: {:,}'.format(sg.turns_taken))
+        print('Total stars: {}'.format(sg.total_stars))
+        print('Water: {:,}'.format(sg.water))
+        print('')
+
         # Displaying character names
         if args.verbose:
             print('Total seen characters:')
@@ -1177,10 +1184,6 @@ if __name__ == '__main__':
             for level in sg.levels.keys():
                 print('  * {}'.format(level.decode('utf-8')))
             print('')
-
-        # Water!
-        print('Water: {}'.format(sg.water))
-        print('')
 
         # hat information!
         if args.verbose:
