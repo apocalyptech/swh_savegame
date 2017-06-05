@@ -732,9 +732,11 @@ class Savegame(object):
         self.unknown_20 = read_uint32(df)
         assert self.unknown_20 == 0
 
-        # An odd intlist, populated only occasionally throughout my collection of
-        # savegames.
-        self.early_game_intlist = read_uint32list(df)
+        # "New" hats (interestingly, if you have the hat DLC installed
+        # and skip the tutorial, the automatic hats you get do NOT show
+        # up here until after the next mission.  There's something to
+        # do with finishing a mission which populates this list.)
+        self.new_hats = read_uint32list(df)
 
         # Unknown, always zero.
         self.unknown_21 = read_uint8(df)
@@ -968,8 +970,8 @@ class Savegame(object):
         # Unknown
         write_uint32(df, self.unknown_20)
 
-        # early-game intlist?
-        write_uint32list(df, self.early_game_intlist)
+        # "New" hats
+        write_uint32list(df, self.new_hats)
 
         # Unknown
         write_uint8(df, self.unknown_21)
@@ -1238,12 +1240,17 @@ if __name__ == '__main__':
         # New items
         if args.verbose:
             print('Items marked as "new":')
-            if len(sg.new_items) > 0:
+            if len(sg.new_items) > 0 or len(sg.new_hats) > 0:
                 for idnum in sg.new_items:
                     if idnum in sg.items:
                         print('  * New item: {}'.format(sg.items[idnum].name.decode('utf-8')))
                     else:
                         print('  * Unknown new item ID: {}'.format(idnum))
+                for idnum in sg.new_hats:
+                    if idnum in sg.hats:
+                        print('  * New hat: {}'.format(sg.hats[idnum].name.decode('utf-8')))
+                    else:
+                        print('  * Unknown new hat ID: {}'.format(idnum))
             else:
                 print('  (none)')
             print('')
