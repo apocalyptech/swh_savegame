@@ -21,15 +21,14 @@ plan to write one for it.  I use it on Linux, but it should work in OSX's
 Terminal without problems, or in a Windows commandline/powershell.
 
 **Disclaimer:** This has been tested on a bunch of savegames and works just
-fine on the ones I have, but I am sure that there are plenty of savegame
-possibilities that this utility won't be able to read.  The utility uses
-Python's `assert` statement pretty frequently while loading, and does a
-sanity check to make sure that it can correctly write out a 100%-accurate
-replica of the savegame before actually making any changes, so the
-worst-case scenario is that the utility Just Doesn't Do Anything, but as
-always, keep in mind that this utility could generate a savegame that will
-break *SteamWorld Heist* in unexpected ways.  Buyer beware!  Make backups
-of your savegames!
+fine on the ones I have, but I am sure that there are some corner cases
+that this utility won't be able to read.  The utility uses Python's
+`assert` statement pretty frequently while loading, and does a sanity check
+to make sure that it can correctly write out a 100%-accurate replica of the
+savegame before actually making any changes, so the worst-case scenario is
+that the utility Just Doesn't Do Anything, but as always, keep in mind that
+this utility could generate a savegame that will break *SteamWorld Heist*
+in unexpected ways.  Buyer beware!  Make backups of your savegames!
 
 This utility does *not* parse the entire savegame; it only goes up to about
 the place in the file that I was interested in editing, so there's about
@@ -158,17 +157,15 @@ the point at which I stopped parsing it.
 
 As I mentioned far above, I've verified that this works against the
 collection of savegames that I saved, though I am sure that there are
-savegames out there which this utility'll choke on.  I've checked it
-against about 2/3rds of the game in NG+ mode, and against a few of the
-final savegames from my initial runthrough the game, and those all load
-just fine (though I've made a couple of minor fixes on this NG+
-runthrough).  I'll be checking more savegames as I finish up NG+.
+corner cases which this utility'll choke on.  I've checked it against an
+entire run of the game in NG+ mode, and against a few of the final
+savegames from my initial runthrough the game.  I've only got a single
+savegame from before I bought the DLC, so DLCless saves are a little less
+well tested, thouh I'd expect they should be fine.
 
-In particular, I suspect that many of the places in the savegame loading
-routine where I'm asserting that various numbers are 0x00 are actually
-supposed to be lists of data which just happen to have zero elements on all
-my savegames.  On the couple of updates that I've had to do since figuring
-out what I cared about, that's been what's introduced problems.
+I suspect that many of the places in the savegame loading routine where I'm
+asserting that various numbers are 0x00 are actually supposed to be lists of
+data which just happen to have zero elements on all my savegames.
 
 And, of course, all of the data marked with "unknown" as varnames are
 basically just guesses as to what size data they are.  When presented with
