@@ -465,47 +465,45 @@ class Savegame(object):
     Class to hold a SteamWorld Heist savegame.
     """
 
-    # Hats!
-    hats_base = [
-            'youtube_hat', 'facebook_hat', 'twitter_hat', 'double_hat',
-            'blue_fine_hat', 'shades', 'brownknitted', 'spinny',
-            'goggle_hat', 'horns', 'lovely_hat', 'cavalier_cap',
-            'cat_ears', 'javert_hat', 'rusty_hat', 'shiner_hat',
-            'syd_vast', 'mutant_mudds', 'star_cowboy', 'goat_sim',
-            'band_helmet', 'fedora', 'hankton_cap', 'intelligence_hat',
-            'red_beret', 'heavy_chopper_hat', 'bowtie', 'goku_hair',
-            'green_bro_cap', 'valkyrie', 'royal_wig', 'red_bro_cap',
-            'royal_crown', 'bomb_deployer_hat', 'golem_cap', 'buzzer_hat',
-            'ace_hat', 'mustache_hat', 'chopped_head', 'beetle_hat',
-            'heavy_beetle_hat', 'beak_hat', 'catch_of_the_day', 'air_force_cap',
-            'classic_ushanka', 'soft_cap', 'war_crown', 'blue_red_hat',
-            'fez', 'funky_cap', 'blue_yellow_hat', 'crown',
-            'green_ushanka', 'justice_circlet', 'snowboard_hat', 'cathat',
-            'welder_cap', 'corshat', 'royalist_helmet', 'royalist_officer_hat',
-            'royalist_blast_helmet', 'royalist_rider_helmet', 'pink_bandana', 'iron_cap',
-            'armoured_tophat', 'medic_hat', 'army_helmet', 'bandit',
-            'beret', 'boss_cap', 'bowler', 'brown_bowler',
-            'cap', 'truckercap', 'captain', 'cowbot',
-            'eggs_in_nest', 'fisherman', 'gunnar_hat', 'poof_hat',
-            'goon_hat', 'pirate', 'pirate2', 'swab',
-            'top', 'warm', 'tophatpurple', 'sailor_hat',
-            'dragoon', 'fire_helmet', 'copperback_cap', 'caw-kaa',
-        ]
-
-    # More hats
-    hats_dlc = {
+    # Hats!  Arranged by DLC, "0" is the base game.
+    full_hats = {
+            0: [
+                b'youtube_hat', b'facebook_hat', b'twitter_hat', b'double_hat',
+                b'blue_fine_hat', b'shades', b'brownknitted', b'spinny',
+                b'goggle_hat', b'horns', b'lovely_hat', b'cavalier_cap',
+                b'cat_ears', b'javert_hat', b'rusty_hat', b'shiner_hat',
+                b'syd_vast', b'mutant_mudds', b'star_cowboy', b'goat_sim',
+                b'band_helmet', b'fedora', b'hankton_cap', b'intelligence_hat',
+                b'red_beret', b'heavy_chopper_hat', b'bowtie', b'goku_hair',
+                b'green_bro_cap', b'valkyrie', b'royal_wig', b'red_bro_cap',
+                b'royal_crown', b'bomb_deployer_hat', b'golem_cap', b'buzzer_hat',
+                b'ace_hat', b'mustache_hat', b'chopped_head', b'beetle_hat',
+                b'heavy_beetle_hat', b'beak_hat', b'catch_of_the_day', b'air_force_cap',
+                b'classic_ushanka', b'soft_cap', b'war_crown', b'blue_red_hat',
+                b'fez', b'funky_cap', b'blue_yellow_hat', b'crown',
+                b'green_ushanka', b'justice_circlet', b'snowboard_hat', b'cathat',
+                b'welder_cap', b'corshat', b'royalist_helmet', b'royalist_officer_hat',
+                b'royalist_blast_helmet', b'royalist_rider_helmet', b'pink_bandana', b'iron_cap',
+                b'armoured_tophat', b'medic_hat', b'army_helmet', b'bandit',
+                b'beret', b'boss_cap', b'bowler', b'brown_bowler',
+                b'cap', b'truckercap', b'captain', b'cowbot',
+                b'eggs_in_nest', b'fisherman', b'gunnar_hat', b'poof_hat',
+                b'goon_hat', b'pirate', b'pirate2', b'swab',
+                b'top', b'warm', b'tophatpurple', b'sailor_hat',
+                b'dragoon', b'fire_helmet', b'copperback_cap', b'caw-kaa',
+                ],
             1: [
-                'sauce_hat', 'prison_hat', 'pokercowboy', 'jones',
-                'ash', 'jayne', 'layton', 'flower_crown',
-                'shell_crown', 'petit_top_hat', 'cloud', 'turban',
-                'wizzard', 'strawhat', 'dolores', 'hatoful',
-                'flapper_band', 'marty_cap', 'jester', 'durkslag',
-                'headphones', 'detectivecap',
+                b'sauce_hat', b'prison_hat', b'pokercowboy', b'jones',
+                b'ash', b'jayne', b'layton', b'flower_crown',
+                b'shell_crown', b'petit_top_hat', b'cloud', b'turban',
+                b'wizzard', b'strawhat', b'dolores', b'hatoful',
+                b'flapper_band', b'marty_cap', b'jester', b'durkslag',
+                b'headphones', b'detectivecap',
                 ],
             2: [
-                'posthelm', 'sortinghat', 'bladerunner', 'first_crown',
-                'five_hats', 'metropolis', 'miner_helm', 'spock',
-                'squidberg', 'sw_helm'
+                b'posthelm', b'sortinghat', b'bladerunner', b'first_crown',
+                b'five_hats', b'metropolis', b'miner_helm', b'spock',
+                b'squidberg', b'sw_helm'
                 ],
         }
 
@@ -519,7 +517,9 @@ class Savegame(object):
         """
         Method to find out if this savegame has the given DLC enabled
         """
-        if 'DLC/dlc{:02d}'.format(dlcnum).encode('utf-8') in self.dlc:
+        if dlcnum == 0:
+            return True
+        elif 'DLC/dlc{:02d}'.format(dlcnum).encode('utf-8') in self.dlc:
             return True
         else:
             return False
@@ -1038,6 +1038,19 @@ class Savegame(object):
         if hatname not in self.seen_hats:
             self.seen_hats.append(hatname)
 
+    def remove_hat(self, hatname):
+        """
+        Removes a hat from our hat list
+        """
+        to_remove = None
+        for hat in self.hats.values():
+            if hat.name == hatname:
+                to_remove = hat
+                break
+        if to_remove:
+            del self.hats[hat.idnum]
+            self.seen_hats.remove(hat.name)
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(
@@ -1383,15 +1396,14 @@ if __name__ == '__main__':
 
         # Add hats
         if args.hats:
-            hatlist = sg.hats_base
-            for dlcnum in [1, 2]:
+            hatlist = []
+            for dlcnum in [0, 1, 2]:
                 if sg.has_dlc(dlcnum):
-                    hatlist += sg.hats_dlc[dlcnum]
+                    hatlist += sg.full_hats[dlcnum]
             hats_added = 0
             for hatname in hatlist:
-                encoded = hatname.encode('utf-8')
-                if encoded not in sg.seen_hats:
-                    sg.add_hat(encoded)
+                if hatname not in sg.seen_hats:
+                    sg.add_hat(hatname)
                     hats_added += 1
             print('Added {} hats ({} already present)'.format(hats_added, len(hatlist)-hats_added))
 
