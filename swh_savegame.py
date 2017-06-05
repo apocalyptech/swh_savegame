@@ -545,53 +545,67 @@ class Savegame(object):
         self.initial_03 = read_uint8(df)
         assert self.initial_03 == 3
 
+        ###
+        ### Interestingly; there's two very similar blocks here:
+        ###   1) Something which looks like it's probably a uint8
+        ###   2) Six bytes for which I can't seem to find a clear pattern
+        ###      (int/short/byte/whatever)
+        ###   3) A final byte which looks a lot like it should be a
+        ###      uint8.
+        ###
+        ### So yeah, that's the sequence unknown_01 -> unknown_02 -> initial_40
+        ### and unknown_03 -> unknown_04 -> initial_40_2
+        ###
+        ### I surmise below that at least one of these might be related to
+        ### the total time played (as displayed on the load screen), though
+        ### if so, it's weird that there's two very similar blocks right next
+        ### to each other.  Ah, well.
+        ###
+
         # Unknown byte of some sort; 0x14 and 0xf4 on completed games, 0x00 on not
         # Another seen value is 0xF6
         self.unknown_01 = read_uint8(df)
 
-        # Six unknown bytes - I suspect this is an int (possibly either time-played
-        # or turns-taken) followed by a short (or two bytes)
+        # Six unknown bytes - I suspect this is an int (possibly time-played?)
+        # followed by a short (or two bytes)
         self.unknown_02 = df.read(6)
 
-        # 0x40: also seen: 0x41!  That 0x41 is only seen in a single of my savegames
-        # so far.  Keeping the varname at 'initial_40' for now, though that's silly.
+        # Nearly always 0x40, but sometimes 0x41.  Variable name is a bit obsolete
+        # now, but whatever.
         self.initial_40 = read_uint8(df)
-        #assert self.initial_40 == 0x40
 
-        # Unknown byte of some sort; 0x14 and 0xf4 on completed games, 0x00 on not
-        # Also seen: 0xE0
+        # Unknown byte of some sort
         self.unknown_03 = read_uint8(df)
 
-        # Another six unknown bytes.  Probably related to either time-played or
-        # turns-taken, at least partially
+        # Another six unknown bytes.  Possibly related to time-played?
         self.unknown_04 = df.read(6)
 
         # Another unknown byte; 0x40 on nearly all my saves, but 0x00 on a
         # very earliest NG+ save.  Going to keep the var name but not do an
-        # assert on it, I guess.
+        # assert on it, I guess, as with initial_40, above.
         self.initial_40_2 = read_uint8(df)
-        #assert self.initial_40_2 == 0x40
 
         # Difficuly setting
         self.difficulty = read_string(df)
 
-        # int, 2 for completed; maybe current location?
+        # Looks like what map area we're currently in, maybe? (0: outskirts, 1: core, 2: deep space)
         self.current_loc = read_uint32(df)
 
-        # usually 1
-        self.usually_1 = read_uint32(df)
+        # Difficulty number (0: casual, 4: elite) (maybe just of current mission?)
+        self.difficulty_number = read_uint32(df)
 
-        # Unknown, 3 for completed, 0 otherwise
+        # Unknown, 3 on one or two savegames of mine, zero everywhere else.
         self.unknown_05 = read_uint32(df)
 
-        # Unknown, possibly related to number of different items seen
-        self.unknown_06 = read_uint32(df)
+        # Total Stars
+        self.total_stars = read_uint32(df)
 
-        # Unknown, gets bigger as time passes
-        self.unknown_07 = read_uint32(df)
+        # Number of turns taken (in total, though resets in NG+)
+        self.turns_taken = read_uint32(df)
 
-        # Unknown, zero everywhere I've seen
-        self.unknown_08 = read_uint16(df)
+        # New Game Plus?  Seems to be 0x00 for the first playthrough, and 0xFF for NG+.
+        # At least that's how it seems...
+        self.new_game_plus = read_uint16(df)
 
         # Unknown - the same everywhere though.
         self.unknown_09 = read_uint32(df)
@@ -603,7 +617,7 @@ class Savegame(object):
         # Another DLC list
         self.dlc2 = read_stringlist(df)
 
-        # Unknown
+        # Unknown.  Seems to be always 0x02
         self.unknown_10 = read_uint16(df)
 
         # Some kind of character list, I guess?
@@ -616,8 +630,12 @@ class Savegame(object):
         # Missions/whatever
         self.missions = Mission.read_missions(df)
 
-        # More unknowns
+        # Unknown - starts 'round 26 at the beginning and grows
+        # to ~146 at the end of the game
         self.unknown_12 = read_uint8(df)
+
+        # Was 1 on my first pre-NG+ games and 0 otherwise, though other
+        # saves I started after that which aren't NG+ are also 0
         self.unknown_13 = read_uint32(df)
 
         # Levels/whatever
@@ -634,8 +652,9 @@ class Savegame(object):
         # all "treasure_scrappers"
         self.treasurelist = read_stringlist(df)
 
-        # Unknown
+        # Unknown, always zero, it seems
         self.unknown_15 = read_uint8(df)
+        assert self.unknown_15 == 0
 
         # Last Item ID
         self.last_item_id = read_uint32(df)
@@ -667,15 +686,15 @@ class Savegame(object):
         # Number of items in this list seems nearly always to be
         # the total number of unlocked characters, but in
         # 001-01-beginning.dat it's 1 rather than 2.  Not sure.
+        # ... I think it might be the list of chars you've actually
+        # taken out on missions?  That matches up from my NG+ saves.
         self.unknown_char_list = read_uint32list(df)
 
         # Unknown, always zero
         self.unknown_17 = read_uint8(df)
         assert self.unknown_17 == 0
 
-        # This, actually, is where I think the character IDs are
-        # assigned; I should see if I can associate them back to
-        # the equipment list items, earlier.
+        # Character ID assignment
         self.char_id_order = []
         num_chars = read_uint8(df)
         self.char_by_id = {}
@@ -693,7 +712,7 @@ class Savegame(object):
         self.unknown_18 = read_uint32(df)
         assert self.unknown_18 == 0
 
-        # Unknown intlist
+        # Unknown intlist (only seen data in here on a single savegame)
         self.unknown_19_list = read_uint32list(df)
 
         # Unknown, always zero
@@ -705,21 +724,16 @@ class Savegame(object):
 
         # Seen hats. Pretty weird, seems to be a repeat of the previous
         # hat structure but without the IDs (and in a different order).
-        # I bet if you lose a hat to it being blown off, and don't pick
-        # it up, it'll remain in this list even though it leaves the
-        # inventory.  Not really sure why this would make a difference in-game
-        # though.
+        # Not really sure why this would make a difference in-game
+        # though, since you can't seem to actually lose hats.
         self.seen_hats = read_stringlist(df)
 
-        # Unknown, always zero.  Maybe a "new hats" list like there is
-        # for bank items, below?  Though new hats might just be included
-        # in that list as well; I'm not sure if the IDs collide or not.
+        # Unknown, always zero.
         self.unknown_20 = read_uint32(df)
         assert self.unknown_20 == 0
 
-        # An odd intlist which I've only seen on my 'very beginning of the
-        # game' savegame.  Has ten items, counting down from 0x0C to 0x03.
-        # Weird.
+        # An odd intlist, populated only occasionally throughout my collection of
+        # savegames.
         self.early_game_intlist = read_uint32list(df)
 
         # Unknown, always zero.
@@ -732,11 +746,10 @@ class Savegame(object):
         # As with hats, a separate stringlist, seemingly just of items we've
         # seen.  Makes slightly more sense in this context, as this will be
         # a bigger list than what's in your bank (at least after a few
-        # missions).  I suppose the hatlist may be different too, right?
-        # What happens if your hat gets shot off and you don't manage to
-        # pick it up afterwards?  Still, not really sure why the game even
-        # needs a list of seen items; it doesn't seem to mater much to the
-        # user...
+        # missions).  Still, not really sure why the game even needs a list
+        # of seen items; it doesn't seem to mater much to the user...  Might
+        # just be because it *does* make sense to have this for hats, and I
+        # bet the game is using the same code to load both.
         #self.seen_items = read_stringlist(df)
         # Also!  This is weird; on a few of my end-game savegames (after enabling
         # DLC), there's an errant 0x01 right after the uint8 specifying the
@@ -855,20 +868,20 @@ class Savegame(object):
         # int, 2 for completed; maybe current location?
         write_uint32(df, self.current_loc)
 
-        # usually 1
-        write_uint32(df, self.usually_1)
+        # difficulty number
+        write_uint32(df, self.difficulty_number)
 
         # Unknown, 3 for completed, 0 otherwise
         write_uint32(df, self.unknown_05)
 
-        # Unknown, possibly related to number of different items seen
-        write_uint32(df, self.unknown_06)
+        # Total Stars
+        write_uint32(df, self.total_stars)
 
-        # Unknown, gets bigger as time passes
-        write_uint32(df, self.unknown_07)
+        # Number of turns taken
+        write_uint32(df, self.turns_taken)
 
         # Unknown, zero everywhere I've seen
-        write_uint16(df, self.unknown_08)
+        write_uint16(df, self.new_game_plus)
 
         # Unknown - the same everywhere though.
         write_uint32(df, self.unknown_09)
