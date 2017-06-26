@@ -1300,7 +1300,7 @@ if __name__ == '__main__':
                 ]
 
             # Assault
-            if self.has_dlc(1):
+            if sg.has_dlc(1):
                 itemlist += [
                         b'smg_09', b'smg_09', b'smg_09', b'shotgun_09',
                         b'smg_rare_09', b'smg_rare_09', b'smg_rare_09', b'shotgun_09',
@@ -1318,7 +1318,7 @@ if __name__ == '__main__':
                 ]
 
             # Heavy
-            if self.has_dlc(1):
+            if sg.has_dlc(1):
                 itemlist += [
                         b'rpg_09', b'rpg_09', b'rpg_rare_09', b'rpg_rare_09',
                         b'lobber_09', b'lobber_09', b'minigun_rare_09', b'minigun_rare_09',
@@ -1349,7 +1349,7 @@ if __name__ == '__main__':
                 ]
 
             # Damage (continued)
-            if self.has_dlc(1):
+            if sg.has_dlc(1):
                 itemlist += [
                         b'ammo_berserker', b'ammo_berserker', b'ammo_berserker', b'ammo_berserker',
                     ]
@@ -1376,7 +1376,7 @@ if __name__ == '__main__':
                 ]
 
             # Armor (continued)
-            if self.has_dlc(1):
+            if sg.has_dlc(1):
                 itemlist += [
                         b'armor_retaliating', b'armor_retaliating', b'armor_retaliating', b'armor_retaliating',
                     ]
@@ -1387,7 +1387,7 @@ if __name__ == '__main__':
                 ]
 
             # Taunt Horn (can't imagine you'd want all four of these, but whatever)
-            if self.has_dlc(1):
+            if sg.has_dlc(1):
                 itemlist += [
                         b'taunt_horn', b'taunt_horn', b'taunt_horn', b'taunt_horn',
                     ]
