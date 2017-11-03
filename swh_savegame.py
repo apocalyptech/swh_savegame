@@ -608,9 +608,12 @@ class Savegame(object):
         # At least that's how it seems...
         self.new_game_plus = read_uint16(df)
 
-        # Unknown - the same everywhere though.
+        # Unknown - maybe it's a version number of the SteamWorld Heist
+        # binary which created the file, at least partially?  All my
+        # savegames while developing this were 0x0262CFF8, but after
+        # a number of months while playing again, I saw the value of
+        # 0x0262F709.  Anyway, removing our previous assert().
         self.unknown_09 = read_uint32(df)
-        assert self.unknown_09 == 0x0262CFF8
 
         # DLC
         self.dlc = read_stringlist(df)
