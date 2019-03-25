@@ -1305,13 +1305,13 @@ if __name__ == '__main__':
             # Assault
             if sg.has_dlc(1):
                 itemlist += [
-                        b'smg_09', b'smg_09', b'smg_09', b'shotgun_09',
-                        b'smg_rare_09', b'smg_rare_09', b'smg_rare_09', b'shotgun_09',
+                        b'shotgun_09', b'shotgun_09', b'smg_dlc01', b'smg_dlc01',
+                        b'smg_09', b'smg_09', b'smg_rare_09', b'smg_rare_09',
                     ]
             else:
                 itemlist += [
-                        b'shotgun_09', b'shotgun_09', b'smg_dlc01', b'smg_dlc01',
-                        b'smg_09', b'smg_09', b'smg_rare_09', b'smg_rare_09',
+                        b'smg_09', b'smg_09', b'smg_09', b'shotgun_09',
+                        b'smg_rare_09', b'smg_rare_09', b'smg_rare_09', b'shotgun_09',
                     ]
 
             # Sniper
@@ -1324,12 +1324,12 @@ if __name__ == '__main__':
             if sg.has_dlc(1):
                 itemlist += [
                         b'rpg_09', b'rpg_09', b'rpg_rare_09', b'rpg_rare_09',
-                        b'lobber_09', b'lobber_09', b'minigun_rare_09', b'minigun_rare_09',
+                        b'lobber_09', b'minigun_rare_09', b'rpg_dlc01', b'rpg_dlc01',
                     ]
             else:
                 itemlist += [
                         b'rpg_09', b'rpg_09', b'rpg_rare_09', b'rpg_rare_09',
-                        b'lobber_09', b'minigun_rare_09', b'rpg_dlc01', b'rpg_dlc01',
+                        b'lobber_09', b'lobber_09', b'minigun_rare_09', b'minigun_rare_09',
                     ]
 
             itemlist += [
