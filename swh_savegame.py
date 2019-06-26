@@ -375,6 +375,10 @@ class Item(object):
         """
         items = collections.OrderedDict()
         num_items = read_uint8(df)
+        first_num = read_uint8(df)
+        have_initial_01 = (first_num == 1)
+        if not have_initial_01:
+            df.seek(-1, 1)
         for num in range(num_items):
 
             # Read in the initial name and add to our dict
@@ -383,14 +387,16 @@ class Item(object):
             item = Item(name=name, idnum=idnum)
             items[idnum] = item
 
-        return items
+        return (have_initial_01, items)
 
     @staticmethod
-    def write_items(df, items):
+    def write_items(df, initial_01, items):
         """
         Write items to a file
         """
         write_uint8(df, len(items))
+        if initial_01:
+            write_uint8(df, 1)
         for item in items.values():
             write_uint32(df, item.idnum)
             write_string(df, item.name)
@@ -724,7 +730,7 @@ class Savegame(object):
         assert self.unknown_19 == 0
 
         # Hats!
-        self.hats = Item.read_items(df)
+        (self.hats_initial_01, self.hats) = Item.read_items(df)
 
         # Seen hats. Pretty weird, seems to be a repeat of the previous
         # hat structure but without the IDs (and in a different order).
@@ -747,7 +753,7 @@ class Savegame(object):
         assert self.unknown_21 == 0
 
         # Bank items
-        self.items = Item.read_items(df)
+        (self.items_initial_01, self.items) = Item.read_items(df)
 
         # As with hats, a separate stringlist, seemingly just of items we've
         # seen.  Makes slightly more sense in this context, as this will be
@@ -966,7 +972,7 @@ class Savegame(object):
         write_uint8(df, self.unknown_19)
 
         # Hats!
-        Item.write_items(df, self.hats)
+        Item.write_items(df, self.hats_initial_01, self.hats)
 
         # Seen hats?
         write_stringlist(df, self.seen_hats)
@@ -981,7 +987,7 @@ class Savegame(object):
         write_uint8(df, self.unknown_21)
 
         # Bank items
-        Item.write_items(df, self.items)
+        Item.write_items(df, self.items_initial_01, self.items)
 
         # Seen items
         #write_stringlist(df, self.seen_items)
